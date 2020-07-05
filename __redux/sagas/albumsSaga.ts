@@ -9,13 +9,17 @@ import {
   editAnAlbumApi,
 } from '../api/index';
 
-export const getToken = (state: RootReducer) => state.loginRedcer.user.token;
+export const getToken = (state: RootReducer) => state.loginReducer.user.token;
 
 export function* handleAlbumsLoad() {
   try {
     console.log('handleAlbumsLoad in saga called');
     yield put({type: ALBUMS.START_ISLOADING});
+    console.log('is loading started');
+
     const JWTtoken = yield select(getToken);
+    console.log('jwt got');
+
     console.log(JWTtoken);
     const images = yield call(getAllAlbums, JWTtoken);
     console.log('images in saga :' + images);

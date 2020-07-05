@@ -6,10 +6,10 @@ import {
   editPhotoApi,
   deletePhotoApi,
 } from '../api/index';
+import {RootReducer} from '../reducers';
 
 export const getUrl = (state: any) => state.photosReducer.url;
-export const getToken = (state: any) => state.loginReducer.user.token;
-
+export const getToken = (state: RootReducer) => state.loginReducer.user.token;
 export function* handleImagesLoad(data: any) {
   try {
     console.log('handleImagesLoad called');

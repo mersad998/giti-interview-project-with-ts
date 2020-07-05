@@ -1,58 +1,80 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { View, StyleSheet, StatusBar, Image } from 'react-native';
-import { lightGray, purple, white } from 'utils/constants/colors';
-import { CoustomTextComponent } from 'utils/constants/elements';
-import { MyHeader, CoustomButtonComponent } from 'utils/constants/elements';
-import { Input, Icon, Item, Content } from 'native-base';
-import { useForm } from "react-hook-form";
-import { emailRegex } from 'utils/constants/regex'
-import { Error, Success } from 'utils/modals/alerts';
-import { requestUserSignup, resetMessages } from '../../../../__redux/actions/authActions';
-import { connect } from 'react-redux';
+import React, {useState, useRef, useEffect} from 'react';
+import {View, StyleSheet, StatusBar, Image} from 'react-native';
+import {lightGray, purple, white} from 'utils/constants/colors';
+import {CoustomTextComponent} from 'utils/constants/elements';
+import {MyHeader, CoustomButtonComponent} from 'utils/constants/elements';
+import {Input, Icon, Item, Content} from 'native-base';
+import {useForm} from 'react-hook-form';
+import {emailRegex} from 'utils/constants/regex';
+import {Error, Success} from 'utils/modals/alerts';
+import {
+  requestUserSignup,
+  resetMessages,
+} from '../../../../__redux/actions/authActions';
+import {connect} from 'react-redux';
+import {RootReducer} from '../../../../__redux/reducers';
+import {User} from '../../../../__redux/reducers/Types';
 
-const SignUp = props => {
-  const { register, setValue, handleSubmit } = useForm();
+interface SignUpInterface {
+  navigation: any;
+  errorMessage: string;
+  resetMessages: Function;
+  isLoading: boolean;
+  successMessage: string;
+  requestUserSignup: Function;
+}
+const SignUp = (props: SignUpInterface) => {
+  const {register, setValue, handleSubmit} = useForm<OnSubmit>();
 
   const [errMessage, setErrMessage] = useState('');
   const [showPass, setShowPass] = useState(false);
 
-  const EmailRef = useRef(null);
-  const PasswordRef = useRef(null);
-  const RePasswordRef = useRef(null);
+  const EmailRef = useRef<any>(null);
+  const PasswordRef = useRef<any>(null);
+  const RePasswordRef = useRef<any>(null);
 
   useEffect(() => {
     console.log('use effect SignUp');
-    register({ name: "username" });
-    register({ name: "email" });
-    register({ name: "password" });
-    register({ name: "passwordRepeat" });
+    register({name: 'username'});
+    register({name: 'email'});
+    register({name: 'password'});
+    register({name: 'passwordRepeat'});
   }, [register]);
-
-  const onSubmit = data => {
+  interface OnSubmit {
+    username: string | Number | undefined;
+    password: string | Number | undefined;
+    passwordRepeat: string | Number | undefined;
+    email: string | Number | undefined;
+  }
+  const onSubmit = (data: OnSubmit) => {
+    console.log('onsubmit data :');
+    console.log(data);
 
     if (!data.username) {
-      setErrMessage('لطفا نام کاربری خود ر انتخاب نمایید')
-      return
+      setErrMessage('لطفا نام کاربری خود ر انتخاب نمایید');
+      return;
     } else if (!data.email) {
-      setErrMessage('لطفا پست الکترونیکی خود را وارد نمایید')
-      return
-    } else if (!emailRegex.test(data.email)) {
-      setErrMessage('پست الکترونیکی وارد شده صحیح نمیباشد')
-      return
+      setErrMessage('لطفا پست الکترونیکی خود را وارد نمایید');
+      return;
+    } else if (!emailRegex.test(data.email as string)) {
+      setErrMessage('پست الکترونیکی وارد شده صحیح نمیباشد');
+      return;
     } else if (!data.password) {
-      setErrMessage('لطفا کلمه عبور خود را انتخاب نمایید')
-      return
+      setErrMessage('لطفا کلمه عبور خود را انتخاب نمایید');
+      return;
     } else if (!data.passwordRepeat) {
-      setErrMessage('لطفا تکرار کلمه عبور را وارد نمایید')
-      return
+      setErrMessage('لطفا تکرار کلمه عبور را وارد نمایید');
+      return;
     } else if (data.password !== data.passwordRepeat) {
-      setErrMessage('کلمه عبور با تکرار کلمه عبور یکسان نمیباشد')
-      return
+      setErrMessage('کلمه عبور با تکرار کلمه عبور یکسان نمیباشد');
+      return;
     } else {
       console.log('send to server');
-      props.requestUserSignup(data)
+      console.log(data);
+
+      props.requestUserSignup(data);
     }
-  }
+  };
 
   const resetError = () => {
     setErrMessage('');
@@ -63,8 +85,8 @@ const SignUp = props => {
   const changeShowPass = () => setShowPass(!showPass);
   const onSignUpCompelete = () => {
     props.resetMessages();
-    onBackPress()
-  }
+    onBackPress();
+  };
 
   return (
     <>
@@ -79,7 +101,7 @@ const SignUp = props => {
         <Error
           visible={props.errorMessage != ''}
           text={props.errorMessage}
-          confirm={props.resetMessages}
+          confirm={() => props.resetMessages()}
         />
         <Success
           visible={props.successMessage != ''}
@@ -99,8 +121,7 @@ const SignUp = props => {
             placeholder="نام کاربری"
             placeholderTextColor={'gray'}
             style={styles.input}
-
-            onChangeText={text => setValue('username', text, false)}
+            onChangeText={(text) => setValue('username', text, false)}
             editable={!props.isLoading}
             returnKeyType="next"
             blurOnSubmit={false}
@@ -117,7 +138,7 @@ const SignUp = props => {
             placeholder="پست الکترونیکی"
             placeholderTextColor={'gray'}
             style={styles.input}
-            onChangeText={text => setValue('email', text, false)}
+            onChangeText={(text) => setValue('email', text, false)}
             editable={!props.isLoading}
             ref={EmailRef}
             returnKeyType="next"
@@ -141,7 +162,7 @@ const SignUp = props => {
             placeholder="کلمه عبور"
             placeholderTextColor={'gray'}
             style={styles.input}
-            onChangeText={text => setValue('password', text, false)}
+            onChangeText={(text) => setValue('password', text, false)}
             secureTextEntry={showPass ? false : true}
             editable={!props.isLoading}
             ref={PasswordRef}
@@ -166,7 +187,7 @@ const SignUp = props => {
             placeholder="تکرار کلمه عبور"
             placeholderTextColor={'gray'}
             style={styles.input}
-            onChangeText={text => setValue('passwordRepeat', text, false)}
+            onChangeText={(text) => setValue('passwordRepeat', text, false)}
             secureTextEntry={showPass ? false : true}
             editable={!props.isLoading}
             ref={RePasswordRef}
@@ -193,7 +214,7 @@ const SignUp = props => {
       />
     </>
   );
-}
+};
 
 const styles = StyleSheet.create({
   Container: {
@@ -287,17 +308,21 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state: RootReducer) => ({
   errorMessage: state.loginReducer.errorMessage,
   successMessage: state.loginReducer.successMessage,
-  isLoading: state.loginReducer.isLoading
+  isLoading: state.loginReducer.isLoading,
 });
-const mapDispatchToProps = dispatch => ({
-  requestUserSignup: data => requestUserSignup({ data, dispatch }),
-  resetMessages: data => resetMessages({ data, dispatch }),
+interface RequestUserSignup {
+  username: string | Number;
+  password: string | Number;
+  passwordRepeat: string | Number;
+  email: string;
+}
+const mapDispatchToProps = (dispatch: Function) => ({
+  requestUserSignup: (payload: RequestUserSignup) =>
+    requestUserSignup({payload, dispatch}),
+  resetMessages: (payload: any) => resetMessages({payload, dispatch}),
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(SignUp);
+export default connect(mapStateToProps, mapDispatchToProps)(SignUp);

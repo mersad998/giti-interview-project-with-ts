@@ -32,10 +32,10 @@ const loginReducer = (
 
       console.log(action);
       const loginModel = {
-        username: action.payload.data.username,
-        password: action.payload.data.password,
-        remember: action.payload.data.remember,
-        token: action.payload.token,
+        username: action.data.payload.username,
+        password: action.data.payload.password,
+        remember: action.data.payload.remember,
+        token: action.data.token,
       };
       SaveUserInfo(loginModel);
       return {...state, user: loginModel};

@@ -15,7 +15,7 @@ interface LoginModel {
   };
 }
 interface SignUpModel {
-  data: {
+  payload: {
     username: string;
     email: string;
     password: string;
@@ -23,35 +23,35 @@ interface SignUpModel {
 }
 interface AddNewAlbumApi {
   token: string;
-  data: {};
+  payload: any;
 }
 interface GetPhotosOfAnAlbum {
   token: string;
   url?: string;
-  data?: string;
+  payload?: string;
 }
 interface DeleteAnAlbumApi {
   token: string;
-  data: string;
+  payload: string;
 }
 interface EditAnAlbumApi {
   token: string;
-  data: {
+  payload: {
     prevName: string;
     newName: string;
   };
 }
 interface DeletePhotoApi {
   token: string;
-  data: {id: string};
+  payload: {id: string};
 }
 interface EditPhotoApi {
   token: string;
-  data: {
+  payload: {
     id: string;
-    title: string | Number;
-    desc: string | Number;
-    img: any;
+    title?: string | Number;
+    desc?: string | Number;
+    img?: any;
   };
 }
 
@@ -79,14 +79,14 @@ export const LoginApi = (data: LoginModel) => {
 };
 export const SignupApi = (data: SignUpModel) => {
   console.log('in SignupApi :');
-  console.log(data.data);
+  console.log(data.payload);
 
   return new Promise(async (resolve, reject) => {
     axios
       .post(signUpUrl, {
-        username: data.data.username,
-        email: data.data.email,
-        password: data.data.password,
+        username: data.payload.username,
+        email: data.payload.email,
+        password: data.payload.password,
       })
       .then((res) => {
         console.log('status 200');
@@ -121,6 +121,8 @@ export const getAllAlbums = (token: string) => {
   });
 };
 export const addNewAlbumApi = (data: AddNewAlbumApi) => {
+  console.log('in api');
+
   console.log(data);
 
   const token = 'JWT ' + data.token;
@@ -131,7 +133,7 @@ export const addNewAlbumApi = (data: AddNewAlbumApi) => {
     await axios
       .post(
         url,
-        {name: data.data},
+        {name: data.payload},
         {
           headers: {
             Authorization: token,
@@ -149,6 +151,8 @@ export const addNewAlbumApi = (data: AddNewAlbumApi) => {
   });
 };
 export const getPhotosOfAnAlbum = (data: GetPhotosOfAnAlbum) => {
+  console.log('in api');
+
   console.log(data);
   let url: string;
   if (!data.url) {
@@ -156,7 +160,8 @@ export const getPhotosOfAnAlbum = (data: GetPhotosOfAnAlbum) => {
     return;
   }
   if (data.url === 'firstLoad') {
-    url = selectAlbumUrl + data.data + '/pictures';
+    url = selectAlbumUrl + data.payload + '/pictures';
+    console.log('url is :' + url);
   } else {
     console.log('now in api we have new url');
     url = data.url;
@@ -184,15 +189,18 @@ export const getPhotosOfAnAlbum = (data: GetPhotosOfAnAlbum) => {
   });
 };
 export const uploadPhotoApi = async (data: any) => {
+  console.log('in api');
+  console.log(data);
+
   const token = 'JWT ' + data.token;
-  const url = selectAlbumUrl + data.data.albumName + '/pictures';
+  const url = selectAlbumUrl + data.payload.albumName + '/pictures';
   console.log('in api :');
   console.log(data);
 
   let formData = new FormData();
-  formData.append('title', data.data.title);
-  formData.append('desc', data.data.desc ? data.data.desc : '');
-  let localUri = data.data.path;
+  formData.append('title', data.payload.title);
+  formData.append('desc', data.payload.desc ? data.payload.desc : '');
+  let localUri = data.payload.path;
   let filename = localUri.split('/').pop();
   let match = /\.(\w+)$/.exec(filename);
   let type = match ? `image/${match[1]}` : 'image';
@@ -224,7 +232,7 @@ export const uploadPhotoApi = async (data: any) => {
 };
 export const deleteAnAlbumApi = (data: DeleteAnAlbumApi) => {
   const token = 'JWT ' + data.token;
-  const url = selectAlbumUrl + data.data;
+  const url = selectAlbumUrl + data.payload;
   return new Promise(async (resolve, reject) => {
     await axios
       .delete(url, {
@@ -243,13 +251,16 @@ export const deleteAnAlbumApi = (data: DeleteAnAlbumApi) => {
   });
 };
 export const editAnAlbumApi = (data: EditAnAlbumApi) => {
+  console.log('in api');
+  console.log(data);
+
   const token = 'JWT ' + data.token;
-  const url = selectAlbumUrl + data.data.prevName;
+  const url = selectAlbumUrl + data.payload.prevName;
   return new Promise(async (resolve, reject) => {
     await axios
       .put(
         url,
-        {name: data.data.newName},
+        {name: data.payload.newName},
         {
           headers: {
             Authorization: token,
@@ -268,7 +279,7 @@ export const editAnAlbumApi = (data: EditAnAlbumApi) => {
 };
 export const deletePhotoApi = (data: DeletePhotoApi) => {
   const token = 'JWT ' + data.token;
-  const url = selectImageUrl + data.data.id;
+  const url = selectImageUrl + data.payload.id;
   console.log(url, token);
   return new Promise(async (resolve, reject) => {
     await axios
@@ -288,21 +299,25 @@ export const deletePhotoApi = (data: DeletePhotoApi) => {
   });
 };
 export const editPhotoApi = (data: EditPhotoApi) => {
-  console.log('in api');
+  console.log('in apiii');
   console.log(data);
   const token = 'JWT ' + data.token;
-  const url = selectImageUrl + data.data.id;
+  console.log('1');
+
+  const url = selectImageUrl + data.payload.id;
+  console.log('2');
+
   console.log(url, token);
 
   let formData = new FormData();
-  if (data.data.title) {
-    formData.append('title', data.data.title);
+  if (data.payload.title) {
+    formData.append('title', data.payload.title);
   }
-  if (data.data.desc) {
-    formData.append('desc', data.data.desc);
+  if (data.payload.desc) {
+    formData.append('desc', data.payload.desc);
   }
-  if (data.data.img) {
-    let localUri = data.data.img;
+  if (data.payload.img) {
+    let localUri = data.payload.img;
     let filename = localUri.split('/').pop();
     let match = /\.(\w+)$/.exec(filename);
     let type = match ? `image/${match[1]}` : 'image';

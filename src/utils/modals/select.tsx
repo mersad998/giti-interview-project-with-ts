@@ -1,11 +1,22 @@
-import React, { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import React, {useState} from 'react';
+import {StyleSheet, View} from 'react-native';
 import Modal from 'react-native-modal';
-import { Text, Button, Icon } from 'native-base';
-import { purple, lightGray } from 'utils/constants/colors';
-import { IconInput, CoustomButtonComponent } from 'utils/constants/elements';
+import {Text, Button, Icon} from 'native-base';
+import {purple, lightGray} from 'utils/constants/colors';
 
-const SelectModal = ({ items, visible, confirm, dissmiss, orMore }) => {
+interface SelectModalInterface {
+  items: any;
+  visible: boolean;
+  confirm: any;
+  dissmiss(): void;
+}
+
+const SelectModal = ({
+  items,
+  visible,
+  confirm,
+  dissmiss,
+}: SelectModalInterface) => {
   return (
     <Modal
       animationOut="fadeOutDown"
@@ -17,7 +28,7 @@ const SelectModal = ({ items, visible, confirm, dissmiss, orMore }) => {
       onBackButtonPress={dissmiss}
       onBackdropPress={dissmiss}>
       <View style={styles.Container}>
-        {items.map((item, i) => (
+        {items.map((item: {Name: string; Icon?: string}, i: any) => (
           <Button
             full
             rounded
@@ -30,7 +41,6 @@ const SelectModal = ({ items, visible, confirm, dissmiss, orMore }) => {
             ) : null}
           </Button>
         ))}
-
       </View>
     </Modal>
   );
@@ -55,9 +65,6 @@ const styles = StyleSheet.create({
   },
   Icon: {
     fontSize: 16,
-  },
-  orMoreInput: {
-    alignSelf: 'center',
   },
 });
 

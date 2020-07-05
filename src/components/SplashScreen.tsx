@@ -1,13 +1,20 @@
-import React, { useEffect } from "react";
-import { View, Image, StyleSheet, Linking } from "react-native";
-import { lightGray, purple } from "utils/constants/colors";
-import { CoustomTextComponent } from "utils/constants/elements";
-import { Spinner } from "native-base";
-import { getUser } from "../utils/database/userData";
-import { connect } from "react-redux";
-import { setUser } from "../../__redux/actions/authActions";
+import React, {useEffect} from 'react';
+import {View, Image, StyleSheet, Linking} from 'react-native';
+import {lightGray, purple} from 'utils/constants/colors';
+import {CoustomTextComponent} from 'utils/constants/elements';
+import {Spinner} from 'native-base';
+import {getUser} from '../utils/database/userData';
+import {connect} from 'react-redux';
+import {setUser} from '../../__redux/actions/authActions';
+import {RootReducer} from '../../__redux/reducers';
+import {User} from '../../__redux/reducers/Types';
 
-const SplashScreen = (props) => {
+interface SplashScreenInterface {
+  navigation: any;
+  setUser: any;
+}
+
+const SplashScreen = (props: SplashScreenInterface) => {
   const checkUser = async () => {
     const user = await getUser();
 
@@ -16,9 +23,9 @@ const SplashScreen = (props) => {
 
       if (user && user.token && user.remember) {
         props.setUser(user);
-        props.navigation.replace("Home");
+        props.navigation.replace('Home');
       } else {
-        props.navigation.replace("LoginPage");
+        props.navigation.replace('LoginPage');
       }
     }, 3000);
   };
@@ -27,14 +34,14 @@ const SplashScreen = (props) => {
     checkUser();
   }, []);
 
-  const openSite = () => Linking.openURL("https://wsafar.com/index.php");
+  const openSite = () => Linking.openURL('https://wsafar.com/index.php');
 
   return (
     <>
       <View style={styles.Container}>
         <Image
-          resizeMode={"stretch"}
-          source={require("assets/logo.png")}
+          resizeMode={'stretch'}
+          source={require('assets/logo.png')}
           style={styles.Image}
         />
         <CoustomTextComponent style={styles.Text} onPress={openSite}>
@@ -47,8 +54,8 @@ const SplashScreen = (props) => {
       </View>
 
       <Image
-        resizeMode={"stretch"}
-        source={require("assets/footer.png")}
+        resizeMode={'stretch'}
+        source={require('assets/footer.png')}
         style={styles.footerImage}
       />
     </>
@@ -58,14 +65,14 @@ const SplashScreen = (props) => {
 const styles = StyleSheet.create({
   Container: {
     flex: 1,
-    alignItems: "center",
+    alignItems: 'center',
     backgroundColor: lightGray,
   },
   Image: {
-    width: "50%",
-    height: "25%",
-    alignSelf: "center",
-    marginTop: "30%",
+    width: '50%',
+    height: '25%',
+    alignSelf: 'center',
+    marginTop: '30%',
   },
   Text: {
     marginTop: 30,
@@ -81,17 +88,17 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   footerImage: {
-    width: "100%",
+    width: '100%',
     height: 100,
-    alignSelf: "center",
+    alignSelf: 'center',
   },
 });
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state: RootReducer) => ({
   reduxState: state.loginReducer,
 });
-const mapDispatchToProps = (dispatch) => ({
-  setUser: (data) => setUser({ data, dispatch }),
+const mapDispatchToProps = (dispatch: Function) => ({
+  setUser: (payload: User) => setUser({payload, dispatch}),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SplashScreen);

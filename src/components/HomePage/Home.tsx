@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   StyleSheet,
@@ -7,24 +7,33 @@ import {
   RefreshControl,
   TouchableOpacity,
   Image,
-  Dimensions
+  Dimensions,
 } from 'react-native';
-import { lightGray, purple } from 'utils/constants/colors';
-import { MyHeader, CoustomTextComponent, MySpinner } from 'utils/constants/elements';
-import { NamePicker } from 'utils/modals/NamePicker'
-import { loadAlbums, addNewAlbum, resetMessages, deleteAlbum, editAlbum } from '../../../__redux/actions'
-import { connect } from 'react-redux';
-import CustomDrawer from '../../utils/constants/CustomDrawer'
+import {lightGray, purple} from 'utils/constants/colors';
+import {
+  MyHeader,
+  CoustomTextComponent,
+  MySpinner,
+} from 'utils/constants/elements';
+import {NamePicker} from 'utils/modals/NamePicker';
+import {
+  loadAlbums,
+  addNewAlbum,
+  resetMessages,
+  deleteAlbum,
+  editAlbum,
+} from '../../../__redux/actions';
+import {connect} from 'react-redux';
+import CustomDrawer from '../../utils/constants/CustomDrawer';
 import SideMenu from 'react-native-side-menu';
 const deviceWidth = Dimensions.get('window').width;
-import { Error, Success, Delete } from 'utils/modals/alerts';
-import SelectModal from 'utils/modals/select'
-import { Content } from 'native-base';
+import {Error, Success, Delete} from 'utils/modals/alerts';
+import SelectModal from 'utils/modals/select';
+import {Content} from 'native-base';
 const txtDelete = 'حذف آلبوم';
 const txtEdit = 'ویرایش نام آلبوم';
 const deviceHeight = Dimensions.get('window').height;
-
-
+import {RootReducer} from '../../../__redux/reducers';
 
 const Home = (props) => {
   const [showModal, setShowModal] = useState(false);
@@ -35,82 +44,93 @@ const Home = (props) => {
   const [showEditNameModal, setShowEditNameModal] = useState(false);
 
   const visibleModall = () => {
-    setShowModal(true)
-  }
+    setShowModal(true);
+  };
   const dissmissModall = () => {
-    setShowModal(false)
-  }
-  function afterToggleDrawer(state) {
+    setShowModal(false);
+  };
+  function afterToggleDrawer(state: boolean) {
     setTimeout(() => {
       setDrawer(state);
     }, 100);
   }
   const toggleNavBar = () => {
-    setDrawer(prevDrawer => !prevDrawer)
-  }
+    setDrawer((prevDrawer) => !prevDrawer);
+  };
   const loadPage = () => {
     props.loadAlbums();
   };
-  const gotoPhotos = item => {
-    props.navigation.navigate('Images', { albumName: item.item.name })
+  const gotoPhotos = (item: {item: {name: string}}) => {
+    props.navigation.navigate('Images', {albumName: item.item.name});
   };
   const resetDeleteMsg = () => {
-    setDeleteMsg('')
-  }
+    setDeleteMsg('');
+  };
   const showDeleteMsg = () => {
-    let msg = 'آیا برای حذف آلبوم ' + selectedItem + ' مطمئن هستید ؟'
-    setDeleteMsg(msg)
-  }
+    let msg = 'آیا برای حذف آلبوم ' + selectedItem + ' مطمئن هستید ؟';
+    setDeleteMsg(msg);
+  };
   const onConfirmDelete = () => {
-    resetDeleteMsg()
+    resetDeleteMsg();
     props.deleteAlbum(selectedItem);
-    loadPage()
-  }
+    loadPage();
+  };
   const showSelectModal = (name) => {
-    setSelectedItem(name)
-    setSelectModalVisible(true)
-  }
+    setSelectedItem(name);
+    setSelectModalVisible(true);
+  };
   const dissmissSelectModal = () => {
-    setSelectModalVisible(false)
-  }
-  const onChooseNewName = (newName) => {
-    setShowEditNameModal(false)
+    setSelectModalVisible(false);
+  };
+  const onChooseNewName = (newName: string | Number) => {
+    setShowEditNameModal(false);
     let model = {
       prevName: selectedItem,
-      newName: newName
-    }
-    props.editAlbum(model)
-    loadPage()
-  }
+      newName: newName,
+    };
+    props.editAlbum(model);
+    loadPage();
+  };
   useEffect(() => {
     console.log('use effect home');
 
-    loadPage()
+    loadPage();
   }, []);
 
-  const renderItems = (item, index) => {
+  const renderItems = (item: any, index: Number) => {
     return (
       <TouchableOpacity
         style={styles.CartContainer}
         onPress={() => gotoPhotos(item)}
-        onLongPress={() => { showSelectModal(item.item.name) }}
-      >
-        <View style={styles.CardTitle} >
-          <CoustomTextComponent>{item.item.name ? item.item.name : 'بدون نام'}</CoustomTextComponent>
+        onLongPress={() => {
+          showSelectModal(item.item.name);
+        }}>
+        <View style={styles.CardTitle}>
+          <CoustomTextComponent>
+            {item.item.name ? item.item.name : 'بدون نام'}
+          </CoustomTextComponent>
         </View>
         <View style={styles.Grid}>
           <View style={styles.rowView}>
             <View style={styles.Tile}>
               <Image
                 resizeMode={'stretch'}
-                source={item.item.pictures[0] ? { uri: item.item.pictures[0] } : require('assets/noImage.png')}
+                source={
+                  item.item.pictures[0]
+                    ? {uri: item.item.pictures[0]}
+                    : require('assets/noImage.png')
+                }
                 style={styles.Image}
               />
             </View>
             <View style={styles.Tile}>
               <Image
                 resizeMode={'stretch'}
-                source={item.item.pictures[1] ? { uri: item.item.pictures[1] } : require('assets/noImage.png')}
+                source={
+                  item.item.pictures[1]
+                    ? {uri: item.item.pictures[1]}
+                    : require('assets/noImage.png')
+                }
                 style={styles.Image}
               />
             </View>
@@ -119,14 +139,22 @@ const Home = (props) => {
             <View style={styles.Tile}>
               <Image
                 resizeMode={'stretch'}
-                source={item.item.pictures[2] ? { uri: item.item.pictures[2] } : require('assets/noImage.png')}
+                source={
+                  item.item.pictures[2]
+                    ? {uri: item.item.pictures[2]}
+                    : require('assets/noImage.png')
+                }
                 style={styles.Image}
               />
             </View>
             <View style={styles.Tile}>
               <Image
                 resizeMode={'stretch'}
-                source={item.item.pictures[3] ? { uri: item.item.pictures[3] } : require('assets/noImage.png')}
+                source={
+                  item.item.pictures[3]
+                    ? {uri: item.item.pictures[3]}
+                    : require('assets/noImage.png')
+                }
                 style={styles.Image}
               />
             </View>
@@ -136,51 +164,65 @@ const Home = (props) => {
     );
   };
 
-  const onSelectOperation = (type) => {
+  const onSelectOperation = (type: string) => {
     switch (type) {
       case txtDelete:
-        dissmissSelectModal()
-        showDeleteMsg()
+        dissmissSelectModal();
+        showDeleteMsg();
         break;
       case txtEdit:
-        dissmissSelectModal()
-        setShowEditNameModal(true)
+        dissmissSelectModal();
+        setShowEditNameModal(true);
         break;
       default:
-        dissmissSelectModal()
+        dissmissSelectModal();
         break;
     }
     console.log(type);
-  }
+  };
 
   const onSetNewAlbumName = (val) => {
     dissmissModall();
-    props.addNewAlbum(val)
-  }
+    props.addNewAlbum(val);
+  };
   const onCreatedAlbumCompelete = () => {
     dissmissModall();
     props.resetMessages();
-  }
+  };
 
   return (
     <SideMenu
       menu={<CustomDrawer navigation={props.navigation} />}
       menuPosition="right"
-      onChange={state => {
+      onChange={(state) => {
         afterToggleDrawer(state);
       }}
       isOpen={drawer}
       bounceBackOnOverdraw={false}>
-      <MyHeader Title="آلبوم عکس شما" onPlusPress={visibleModall} onHamburgerPress={toggleNavBar} />
+      <MyHeader
+        Title="آلبوم عکس شما"
+        onPlusPress={visibleModall}
+        onHamburgerPress={toggleNavBar}
+      />
       <StatusBar backgroundColor="#470425" />
-      <NamePicker text='لطفا نام آلبوم جدید را وارد نمایید' visible={showModal} confirm={onSetNewAlbumName} dissmiss={dissmissModall} />
-      <NamePicker text='لطفا نام جدید را وارد نمایید' visible={showEditNameModal} confirm={onChooseNewName} dissmiss={() => setShowEditNameModal(false)} />
+      <NamePicker
+        text="لطفا نام آلبوم جدید را وارد نمایید"
+        visible={showModal}
+        confirm={onSetNewAlbumName}
+        dissmiss={dissmissModall}
+      />
+      <NamePicker
+        text="لطفا نام جدید را وارد نمایید"
+        visible={showEditNameModal}
+        confirm={onChooseNewName}
+        dissmiss={() => setShowEditNameModal(false)}
+      />
 
       <View style={styles.Container}>
         <SelectModal
           visible={selectModalVisible}
           dissmiss={dissmissSelectModal}
-          items={[{ Name: txtDelete }, { Name: txtEdit }]}
+          items={[{Name: txtDelete}, {Name: txtEdit}]}
           confirm={onSelectOperation}
         />
         <Error
@@ -212,7 +254,7 @@ const Home = (props) => {
             maxToRenderPerBatch={8}
             initialNumToRender={8}
             windowSize={8}
-            keyExtractor={i => i.ID}
+            keyExtractor={(i) => i.ID}
             renderItem={renderItems}
             onEndReachedThreshold={0.9}
             refreshControl={
@@ -230,15 +272,16 @@ const Home = (props) => {
                 refreshing={props.isLoading}
                 onRefresh={loadPage}
               />
-            } >
-            <CoustomTextComponent style={styles.noPhotoText}>آلبومی برای نمایش وجود ندارد</CoustomTextComponent>
+            }>
+            <CoustomTextComponent style={styles.noPhotoText}>
+              آلبومی برای نمایش وجود ندارد
+            </CoustomTextComponent>
           </Content>
         ) : null}
-
       </View>
     </SideMenu>
   );
-}
+};
 
 const styles = StyleSheet.create({
   Container: {
@@ -259,8 +302,9 @@ const styles = StyleSheet.create({
     borderColor: purple,
     borderWidth: 0.5,
     backgroundColor: purple,
-    borderRadius: 30
-  }, CardTitle: {
+    borderRadius: 30,
+  },
+  CardTitle: {
     width: '84%',
     height: 30,
     backgroundColor: '#c9ccd1',
@@ -269,45 +313,46 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 10,
     borderColor: 'grey',
     borderWidth: 0.5,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   Image: {
     width: '85%',
     height: '85%',
     alignSelf: 'center',
-  }, Grid: {
+  },
+  Grid: {
     flex: 1,
-    margin: 10
-  }, rowView: {
+    margin: 10,
+  },
+  rowView: {
     flex: 1,
-    flexDirection: 'row'
-  }, Tile: {
+    flexDirection: 'row',
+  },
+  Tile: {
     flex: 1,
     margin: 1,
     borderRadius: 10,
     borderWidth: 0.5,
     borderColor: 'grey',
     backgroundColor: lightGray,
-    justifyContent: 'center'
-  }, noPhotoText: {
-    marginTop: deviceHeight / 2.5
-  }
+    justifyContent: 'center',
+  },
+  noPhotoText: {
+    marginTop: deviceHeight / 2.5,
+  },
 });
-const mapStateToProps = state => ({
+const mapStateToProps = (state: RootReducer) => ({
   albums: state.albumsReducer.albums,
   successMessage: state.albumsReducer.successMessage,
   errorMessage: state.albumsReducer.errorMessage,
-  isLoading: state.albumsReducer.isLoading
+  isLoading: state.albumsReducer.isLoading,
 });
-const mapDispatchToProps = dispatch => ({
-  loadAlbums: data => loadAlbums({ data, dispatch }),
-  addNewAlbum: data => addNewAlbum({ data, dispatch }),
-  resetMessages: data => resetMessages({ data, dispatch }),
-  deleteAlbum: data => deleteAlbum({ data, dispatch }),
-  editAlbum: data => editAlbum({ data, dispatch }),
+const mapDispatchToProps = (dispatch: Function) => ({
+  loadAlbums: (payload) => loadAlbums({payload, dispatch}),
+  addNewAlbum: (payload) => addNewAlbum({payload, dispatch}),
+  resetMessages: (payload: any) => resetMessages({payload, dispatch}),
+  deleteAlbum: (payload) => deleteAlbum({payload, dispatch}),
+  editAlbum: (payload) => editAlbum({payload, dispatch}),
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(Home);
+export default connect(mapStateToProps, mapDispatchToProps)(Home);

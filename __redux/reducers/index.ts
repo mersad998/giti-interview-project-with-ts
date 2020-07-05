@@ -5,9 +5,9 @@ import loginReducer from './loginReducer';
 import {AlbumRedcer, PhotosRedcer, LoginRedcer} from './Types';
 
 export interface RootReducer {
-  albumRedcer: AlbumRedcer;
-  photosRedcer: PhotosRedcer;
-  loginRedcer: LoginRedcer;
+  albumReducer: AlbumRedcer;
+  photosReducer: PhotosRedcer;
+  loginReducer: LoginRedcer;
 }
 
 const rootReducer = combineReducers({

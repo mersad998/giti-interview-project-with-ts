@@ -4,7 +4,7 @@ import {connect} from 'react-redux';
 import {
   CoustomTextComponent,
   CoustomButtonComponent,
-} from 'utils/constants/elemments';
+} from '../../../utils/constants/elements';
 import {Error} from 'utils/modals/alerts';
 import {white, purple, lightGray} from 'utils/constants/colors';
 import {
@@ -23,18 +23,24 @@ import {
   requestUserLogin,
   resetMessages,
 } from '../../../../__redux/actions/authActions';
+import {RootReducer} from '../../../../__redux/reducers';
+import {User} from '../../../../__redux/reducers/Types';
 
-const LoginPage = (props) => {
-  // console.log('redux state :');
+interface LoginPageInterface {
+  navigation: any;
+  user: User;
+  requestUserLogin: Function;
+  errorMessage: string;
+  resetMessages: Function;
+  isLoading: boolean;
+}
 
-  // console.log(props.reduxState);
-
-  const {register, setValue, handleSubmit} = useForm();
+const LoginPage = (props: LoginPageInterface) => {
+  const {register, setValue, handleSubmit} = useForm<OnSubmit>();
   const [errMessage, setErrMessage] = useState('');
-  // const [isLoading, setIsLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
   const [showPass, setShowPass] = useState(false);
-  const passwordRef = useRef(null);
+  const passwordRef = useRef<any>(null);
 
   const changeShowPass = () => setShowPass(!showPass);
 
@@ -65,8 +71,16 @@ const LoginPage = (props) => {
   const onSignUpClick = () => {
     props.navigation.navigate('SignUp');
   };
+  interface OnSubmit {
+    username: string | Number | undefined;
+    password: string | Number | undefined;
+    remember?: boolean;
+  }
+  const onSubmit = (data: OnSubmit) => {
+    console.log(' in on submitt');
 
-  const onSubmit = (data) => {
+    console.log(data);
+
     if (!data.username) {
       setErrMessage('لطفا نام کاربری را وارد نمایید');
     } else if (!data.password) {
@@ -88,7 +102,7 @@ const LoginPage = (props) => {
         <Error
           visible={props.errorMessage != ''}
           text={props.errorMessage}
-          confirm={props.resetMessages}
+          confirm={() => props.resetMessages()}
         />
 
         <Image
@@ -245,14 +259,20 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state: RootReducer) => ({
   user: state.loginReducer.user,
   errorMessage: state.loginReducer.errorMessage,
   isLoading: state.loginReducer.isLoading,
 });
-const mapDispatchToProps = (dispatch) => ({
-  requestUserLogin: (payload) => requestUserLogin({payload, dispatch}),
-  resetMessages: (data) => resetMessages({data, dispatch}),
+interface RequestUserLogin {
+  password: string | Number;
+  username: string | Number;
+  remember: boolean;
+}
+const mapDispatchToProps = (dispatch: Function) => ({
+  requestUserLogin: (payload: RequestUserLogin) =>
+    requestUserLogin({payload, dispatch}),
+  resetMessages: (payload: any) => resetMessages({payload, dispatch}),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(LoginPage);
